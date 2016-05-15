@@ -3,25 +3,18 @@ package board;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-
 import java.awt.Component;
-import java.awt.FlowLayout;
-
-import javax.swing.JTextPane;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 public class GameBoard extends JFrame implements ActionListener {
@@ -41,8 +34,9 @@ public class GameBoard extends JFrame implements ActionListener {
 	lblScoreBoard = new JLabel("Score Board");
 	
 	JMenuBar newGameMenu = new JMenuBar();
-	JMenuItem mnNewGame = new JMenu("New Game  "),
-	mnHelp = new JMenu("Help");
+	JMenuItem mnNewGame = new JMenuItem("New Game  "),
+	mnHelp = new JMenuItem("Help "),
+	mnExitGame=new JMenuItem("Exit ");
 	
 	JTextArea helpText = new JTextArea();
 	
@@ -78,17 +72,23 @@ public class GameBoard extends JFrame implements ActionListener {
 		contentPane.add(gameBoardPannel);
 		gameBoardPannel.setLayout(new GridLayout(0, 3, 0, 0));
 		
-		menuPannel.setBounds(0, 0, 116, 31);
+		menuPannel.setBounds(0, 0, 498, 49);
 		contentPane.add(menuPannel);
-		menuPannel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		menuPannel.setLayout(null);
+		newGameMenu.setBounds(10, 11, 418, 24);
 				
 		menuPannel.add(newGameMenu);
 		newGameMenu.setToolTipText("");
+		mnNewGame.setBackground(Color.WHITE);
 		mnNewGame.setAlignmentX(Component.LEFT_ALIGNMENT);
 				
 		mnNewGame.setToolTipText("Start new game");
 		newGameMenu.add(mnNewGame);
+		mnHelp.setBackground(Color.WHITE);
 		newGameMenu.add(mnHelp);
+		mnExitGame.setBackground(Color.WHITE);
+		newGameMenu.add(mnExitGame);
+		
 		helpPanel.setVisible(false);
 		helpPanel.setBounds(176, 71, 202, 157);
 		
@@ -114,7 +114,8 @@ public class GameBoard extends JFrame implements ActionListener {
 		//lblNewLabel.setBounds(0, 11, 110, 14);
 		lblPlayerMove.setBounds(0, 11, 110, 14);
 		playerTurnPannel.add(lblPlayerMove);
-						
+		clearAllPannels();
+		lblPlayerMove.setText("Turn: Player 1");
 		for(int i = 0 ; i < 9 ; i++){
 			btnOnGameBoard[i]=new JButton();
 			
@@ -125,31 +126,49 @@ public class GameBoard extends JFrame implements ActionListener {
 			gameBoardPannel.add(btnOnGameBoard[i]);
 			
 		}
-			
+		
+		mnExitGame.addActionListener(this);
+		mnHelp.addActionListener(this);
+		mnNewGame.addActionListener(this);
+		
+		
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object checkClick=e.getSource();
-		for (int i = 0; i < 9 ; i++) {
-			if(checkClick==btnOnGameBoard[i] && checkPlayer < 9 ){
-				if(checkPlayer % 2 == 0){
-					btnOnGameBoard[i].setText("X");
-					btnOnGameBoard[i].setEnabled(false);
+		if(checkClick==mnNewGame)
+		{ 	
+			clearAllPannels();
+			gameBoardPannel.setVisible(true);
+			scoreBoardPannel.setVisible(true);
+			playerTurnPannel.setVisible(true);
+			for (int i = 0; i < 9 ; i++) {
+				if(checkClick==btnOnGameBoard[i] && checkPlayer < 9 ){
+					if(checkPlayer % 2 == 0){
+						btnOnGameBoard[i].setText("X");
+						btnOnGameBoard[i].setEnabled(false);
+					}
+					else{
+						btnOnGameBoard[i].setForeground(new Color(255,0,0));
+						btnOnGameBoard[i].setText("0");	
+						btnOnGameBoard[i].setEnabled(false);
+					}
+					checkPlayerTurn();
+					checkPlayer++;
 				}
-				else{
-					btnOnGameBoard[i].setForeground(new Color(255,0,0));
-					btnOnGameBoard[i].setText("0");	
-					btnOnGameBoard[i].setEnabled(false);
-				}
-				checkPlayerTurn();
-				checkPlayer++;
 			}
 		}
 		if(checkClick==mnHelp){
+			gameBoardPannel.setVisible(false);
+			scoreBoardPannel.setVisible(false);
+			playerTurnPannel.setVisible(false);
 			helpPanel.setVisible(true);
 			helpText.setText("Temporary\n\n\n\n\n Information ");
 			helpPanel.add(helpText);
+		}
+		if(checkClick==mnExitGame){
+			if(0==JOptionPane.showConfirmDialog(null,"Are you sure","Exit Game",0))System.exit(0);
 		}
 	}
 	public void checkPlayerTurn() {
@@ -163,4 +182,12 @@ public class GameBoard extends JFrame implements ActionListener {
 	public void getHelp(){
 		
 	}
+	
+	public void clearAllPannels(){
+		gameBoardPannel.setVisible(false);
+		scoreBoardPannel.setVisible(false);
+		playerTurnPannel.setVisible(false);
+		helpPanel.setVisible(false);
+	}
+	
 }
